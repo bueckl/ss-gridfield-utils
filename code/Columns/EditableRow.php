@@ -353,7 +353,7 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
         }
 
         if (!$fields && $grid) {
-            if ($editable = $grid->getConfig()->getComponentByType('GridFieldDetailForm')) {
+            if ($editable = $grid->getConfig()->getComponentByType(\SilverStripe\Forms\GridField\GridFieldDetailForm::class)) {
                 if ($editable->getFields()) {
                     $fields = $editable->getFields();
                 } else {
