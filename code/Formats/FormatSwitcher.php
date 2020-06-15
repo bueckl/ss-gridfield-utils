@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -8,16 +9,17 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use GridField_HTMLProvider;
-use GridField_DataManipulator;
-use GridField_ActionProvider;
-use GridField;
-use GridField_FormAction as Button;
+use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\Forms\GridField\GridField_DataManipulator;
+use SilverStripe\Forms\GridField\GridField_ActionProvider;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_FormAction as Button;
 use Milkyway\SS\GridFieldUtils\Contracts\Format;
-use SS_List;
-use ArrayList;
-use ArrayData;
-use FormField;
+use SilverStripe\Forms\GridField\GridState_Data;
+use SilverStripe\ORM\SS_List;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Forms\FormField;
 
 class FormatSwitcher implements GridField_HTMLProvider, GridField_DataManipulator, GridField_ActionProvider
 {
@@ -165,7 +167,7 @@ class FormatSwitcher implements GridField_HTMLProvider, GridField_DataManipulato
      * Retrieves/Sets up the state object used to store and retrieve information
      * about the current paging details of this GridField
      * @param GridField $gridField
-     * @return \GridState_Data
+     * @return GridState_Data
      */
     protected function getFormatState(GridField $gridField) {
         $state = $gridField->State->Formatter;

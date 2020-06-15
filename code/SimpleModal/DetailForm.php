@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils\SimpleModal;
+<?php
+namespace Milkyway\SS\GridFieldUtils\SimpleModal;
 
 /**
  * Milkyway Multimedia
@@ -8,8 +9,8 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use DataModel;
 use Milkyway\SS\GridFieldUtils\GridFieldDetailForm;
+use SilverStripe\ORM\DataObjectSchema;
 
 class DetailForm extends GridFieldDetailForm
 {
@@ -119,7 +120,7 @@ class DetailForm extends GridFieldDetailForm
     public function handleItem($grid, $request)
     {
         if ($this->itemHandlerFactory) {
-            return call_user_func($this->itemHandlerFactory, $grid, $this, $request)->handleRequest($request, DataModel::inst());
+            return call_user_func($this->itemHandlerFactory, $grid, $this, $request)->handleRequest($request, DataObjectSchema::create());
         }
 
         return parent::handleItem($grid, $request);

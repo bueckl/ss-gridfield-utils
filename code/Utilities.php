@@ -9,11 +9,13 @@
 
 namespace Milkyway\SS\GridFieldUtils;
 
+use SilverStripe\View\Requirements;
+
 class Utilities
 {
     public static function include_requirements()
     {
-        \Requirements::css(SS_GRIDFIELD_UTILITIES . '/css/mwm.gridfield.utils.css');
-        \Requirements::javascript(SS_GRIDFIELD_UTILITIES . '/js/mwm.gridfield.utils.js');
+        Requirements::css(SS_GRIDFIELD_UTILITIES . '/css/mwm.gridfield.utils.css');
+        Requirements::javascript(SS_GRIDFIELD_UTILITIES . '/js/mwm.gridfield.utils.js');
     }
 }

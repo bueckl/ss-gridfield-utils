@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils\Controllers;
+<?php
+namespace Milkyway\SS\GridFieldUtils\Controllers;
 
 /**
  * Milkyway Multimedia
@@ -8,15 +9,17 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-if (!class_exists('GridFieldAddExistingSearchButton')) {
+if (!class_exists(GridFieldAddExistingSearchButton::class)) {
     return;
 }
 
-use Controller;
-use PaginatedList;
-use SS_HTTPRequest;
+use SilverStripe\Control\Controller;
+use SilverStripe\ORM\PaginatedList;
+use SilverStripe\Control\HTTPRequest;
+use Symbiote\GridFieldExtensions\GridFieldAddExistingSearchButton;
+use Symbiote\GridFieldExtensions\GridFieldAddExistingSearchHandler;
 
-class AddExistingPicker extends \GridFieldAddExistingSearchHandler
+class AddExistingPicker extends GridFieldAddExistingSearchHandler
 {
     private static $allowed_actions = [
         'index',
@@ -91,7 +94,7 @@ class AddExistingPicker extends \GridFieldAddExistingSearchHandler
     protected function checkAccessCallback()
     {
         return function ($ids) {
-            if ($ids instanceof SS_HTTPRequest) {
+            if ($ids instanceof HTTPRequest) {
                 $ids = (array_unique((array)$ids->postVar('ids')));
             }
 

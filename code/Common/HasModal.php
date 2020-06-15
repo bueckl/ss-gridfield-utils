@@ -1,5 +1,6 @@
 <?php namespace Milkyway\SS\GridFieldUtils\Common;
 
+use Milkyway\SS\GridFieldUtils\GridFieldDetailForm;
 use Milkyway\SS\GridFieldUtils\Utilities;
 use Exception;
 
@@ -27,7 +28,7 @@ trait HasModal
 
     public function handleItem($gridField, $request)
     {
-        $detailForm = $gridField->Config->getComponentByType('GridFieldDetailForm');
+        $detailForm = $gridField->Config->getComponentByType(GridFieldDetailForm::class);
 
         if (!$detailForm) {
             throw new Exception('A GridFieldDetailForm is required to use a modal via this component');

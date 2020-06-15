@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 /**
  * Milkyway Multimedia
  * SaveAllButton.php
@@ -7,12 +8,13 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use GridField;
-use GridField_HTMLProvider;
-use GridField_ActionProvider;
-use GridField_FormAction;
-use GridField_SaveHandler;
-use Controller;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\Forms\GridField\GridField_ActionProvider;
+use SilverStripe\Forms\GridField\GridField_FormAction;
+use SilverStripe\Forms\GridField\GridField_SaveHandler;
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\GridField\GridFieldPaginator;
 
 class SaveAllButton implements GridField_HTMLProvider, GridField_ActionProvider
 {
@@ -108,7 +110,8 @@ class SaveAllButton implements GridField_HTMLProvider, GridField_ActionProvider
 
             if ($this->publish) {
                 // Only use the viewable list items, since bulk publishing can take a toll on the system
-                $list = ($paginator = $grid->getConfig()->getComponentByType('GridFieldPaginator')) ? $paginator->getManipulatedData($grid, $grid->List) : $grid->List;
+                $list = ($paginator = $grid->getConfig()->getComponentByType(GridFieldPaginator::class)) ?
+                    $paginator->getManipulatedData($grid, $grid->List) : $grid->List;
 
                 $list->each(
                     function ($item) {

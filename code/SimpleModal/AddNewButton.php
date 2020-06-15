@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils\SimpleModal;
+<?php
+namespace Milkyway\SS\GridFieldUtils\SimpleModal;
 
 /**
  * Milkyway Multimedia

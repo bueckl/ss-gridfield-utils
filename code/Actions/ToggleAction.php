@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -9,10 +10,12 @@
  */
 
 use Milkyway\SS\GridFieldUtils\Common\Action;
-use GridField_FormAction;
 use LogicException;
-use ValidationException;
-use Requirements;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_FormAction;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\View\Requirements;
+
 
 class ToggleAction extends Action
 {
@@ -111,7 +114,7 @@ class ToggleAction extends Action
             ->Field();
     }
 
-    public function handleAction(\GridField $gridField, $actionName, $arguments, $data)
+    public function handleAction(GridField $gridField, $actionName, $arguments, $data)
     {
         if ($actionName == $this->getActions($gridField)[0]) {
             $record = $gridField->getList()->byID($arguments['RecordID']);

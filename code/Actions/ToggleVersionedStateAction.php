@@ -9,8 +9,8 @@
 
 namespace Milkyway\SS\GridFieldUtils;
 
-use DB;
-use ValidationException;
+use SilverStripe\ORM\DB;
+use SilverStripe\ORM\ValidationException;
 
 class ToggleVersionedStateAction extends ToggleAction
 {

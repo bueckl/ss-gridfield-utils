@@ -1,6 +1,7 @@
-<?php namespace Milkyway\SS\GridFieldUtils\Common;
+<?php
+namespace Milkyway\SS\GridFieldUtils\Common;
 
-use GridField;
+use SilverStripe\Forms\GridField\GridField;
 use Milkyway\SS\GridFieldUtils\FormatSwitcher;
 
 trait FormatsGridField

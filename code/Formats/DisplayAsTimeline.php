@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -8,11 +9,11 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use DataObject;
-use GridField;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Forms\GridField\GridField;
 use Milkyway\SS\GridFieldUtils\Common\FormatsGridField;
 use Milkyway\SS\GridFieldUtils\Contracts\Format;
-use GridField_ColumnProvider;
+use SilverStripe\Forms\GridField\GridField_ColumnProvider;
 
 class DisplayAsTimeline implements GridField_ColumnProvider, Format
 {

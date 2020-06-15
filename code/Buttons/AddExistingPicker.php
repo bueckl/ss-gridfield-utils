@@ -1,4 +1,6 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -12,9 +14,9 @@ if (!class_exists('GridFieldAddExistingSearchButton')) {
     return;
 }
 
-use GridFieldAddExistingSearchButton as AddExistingSearchButton;
-use GridFieldExtensions;
-use ArrayData;
+use Symbiote\GridFieldExtensions\GridFieldAddExistingSearchButton as AddExistingSearchButton;
+use Symbiote\GridFieldExtensions\GridFieldExtensions;
+use SilverStripe\View\ArrayData;
 use Milkyway\SS\GridFieldUtils\Controllers\AddExistingPicker as Controller;
 
 class AddExistingPicker extends AddExistingSearchButton

@@ -1,6 +1,8 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 use Milkyway\SS\GridFieldUtils\Common\HasModal;
+use SilverStripe\Forms\GridField\GridField_URLHandler;
 
 /**
  * Milkyway Multimedia
@@ -10,7 +12,7 @@ use Milkyway\SS\GridFieldUtils\Common\HasModal;
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-class AddNewModal extends GridFieldAddNewButton implements \GridField_URLHandler
+class AddNewModal extends GridFieldAddNewButton implements GridField_URLHandler
 {
     use HasModal;
 

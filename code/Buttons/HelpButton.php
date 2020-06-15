@@ -1,4 +1,9 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
+
+use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\Forms\GridField\GridField_URLHandler;
+use SilverStripe\View\ArrayData;
 
 /**
  * Milkyway Multimedia
@@ -8,9 +13,7 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-class HelpButton implements
-    \GridField_HTMLProvider,
-    \GridField_URLHandler
+class HelpButton implements GridField_HTMLProvider, GridField_URLHandler
 {
     private static $allowed_actions = [
         'handleView',
@@ -74,7 +77,7 @@ class HelpButton implements
         Utilities::include_requirements();
 
         return [
-            $this->fragment => \ArrayData::create([
+            $this->fragment => ArrayData::create([
                     'Title' => $this->getTitle(),
                     'Link'  => $grid->Link('help-' . $this->makeSureIdIsUnique($grid)),
                 ]
@@ -94,7 +97,7 @@ class HelpButton implements
         if ($grid->Form && $grid->Form->Record) {
             $record = $grid->Form->Record;
         } else {
-            $record = \ArrayData::create();
+            $record = ArrayData::create();
         }
 
         $template = is_array($this->template) ? $this->template : [$this->template];

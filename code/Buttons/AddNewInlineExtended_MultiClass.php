@@ -1,4 +1,10 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
+
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\View\ArrayData;
 
 /**
  * Milkyway Multimedia
@@ -32,10 +38,10 @@ class AddNewInlineExtended_MultiClass extends AddNewInlineExtended
      * Gets the classes that can be created using this button, defaulting to the model class and
      * its subclasses.
      *
-     * @param \GridField $grid
+     * @param GridField $grid
      * @return array a map of class name to title
      */
-    public function getAllowedClasses(\GridField $grid)
+    public function getAllowedClasses(GridField $grid)
     {
         $result = array();
 
@@ -44,7 +50,7 @@ class AddNewInlineExtended_MultiClass extends AddNewInlineExtended
             $this->useAllowedClasses = null;
             return $classes;
         } elseif (is_null($this->allowedClasses)) {
-            $classes = array_values(\ClassInfo::subclassesFor($grid->getModelClass()));
+            $classes = array_values(ClassInfo::subclassesFor($grid->getModelClass()));
             sort($classes);
         } else {
             $classes = $this->allowedClasses;
@@ -68,7 +74,7 @@ class AddNewInlineExtended_MultiClass extends AddNewInlineExtended
 
     protected function getButtonFragment($grid)
     {
-        $field = \DropdownField::create(
+        $field = DropdownField::create(
                 sprintf('%s[ClassName]', str_replace('\\', '_', __CLASS__)),
                 '',
                 $this->getAllowedClasses($grid)
@@ -77,10 +83,11 @@ class AddNewInlineExtended_MultiClass extends AddNewInlineExtended
             ;
 
         if ($this->showEmptyString) {
-            $field->setEmptyString($this->showEmptyString !== true ? $this->showEmptyString : _t('GridFieldExtensions.SELECTTYPETOCREATE', '(Select type to create)'));
+            $field->setEmptyString($this->showEmptyString !== true ?
+                $this->showEmptyString : _t('GridFieldExtensions.SELECTTYPETOCREATE', '(Select type to create)'));
         }
 
-        return \ArrayData::create([
+        return ArrayData::create([
             'Title' => $this->getTitle(),
             'Ajax' => true,
             'Link' => $this->Link('load'),

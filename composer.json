@@ -1,7 +1,7 @@
 {
     "name"       : "milkyway-multimedia/ss-gridfield-utils",
     "description": "A collection of GridField components that you can use with any GridField, including Editable Rows and amy more",
-    "type"       : "silverstripe-module",
+    "type"       : "silverstripe-vendormodule",
     "keywords"   : [
         "silverstripe",
         "utilities",
@@ -17,7 +17,7 @@
     ],
     "require"    : {
         "php"                           : ">=5.4",
-        "silverstripe/framework"        : "~3.1",
+        "silverstripe/framework"        : "~4.0",
         "milkyway-multimedia/ss-mwm-env": "~0.3"
     },
     "suggest"    : {

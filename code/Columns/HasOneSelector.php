@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -8,13 +9,14 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use GridField;
-use GridField_ColumnProvider;
-use GridField_SaveHandler;
-use GridField_HTMLProvider;
-use FormField;
-use ArrayData;
-use DataObjectInterface;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_ColumnProvider;
+use SilverStripe\Forms\GridField\GridField_SaveHandler;
+use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\Forms\FormField;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\View\ArrayData;
+use SilverStripe\ORM\DataObjectInterface;
 
 class HasOneSelector implements GridField_ColumnProvider, GridField_SaveHandler, GridField_HTMLProvider
 {
@@ -52,7 +54,7 @@ class HasOneSelector implements GridField_ColumnProvider, GridField_SaveHandler,
     /**
      * Names of all columns which are affected by this component.
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      *
      * @return array
      */
@@ -64,8 +66,8 @@ class HasOneSelector implements GridField_ColumnProvider, GridField_SaveHandler,
     /**
      * HTML for the column, content of the <td> element.
      *
-     * @param  \GridField $gridField
-     * @param  \DataObject $record - Record displayed in this row
+     * @param  GridField $gridField
+     * @param  DataObject $record - Record displayed in this row
      * @param  string $columnName
      *
      * @return string - HTML for the column. Return NULL to skip.
@@ -88,8 +90,8 @@ class HasOneSelector implements GridField_ColumnProvider, GridField_SaveHandler,
     /**
      * Attributes for the element containing the content returned by {@link getColumnContent()}.
      *
-     * @param  \GridField $gridField
-     * @param  \DataObject $record displayed in this row
+     * @param  GridField $gridField
+     * @param  DataObject $record displayed in this row
      * @param  string $columnName
      *
      * @return array
@@ -106,7 +108,7 @@ class HasOneSelector implements GridField_ColumnProvider, GridField_SaveHandler,
      * Additional metadata about the column which can be used by other components,
      * e.g. to set a title for a search column header.
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      * @param string $columnName
      *
      * @return array - Map of arbitrary metadata identifiers to their values.

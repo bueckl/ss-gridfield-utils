@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -10,24 +11,27 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-if (!class_exists('GridFieldAddNewInlineButton')) {
+if (!class_exists(GridFieldAddNewInlineButton::class)) {
     return;
 }
 
 use Select2Field;
-use Convert;
-use Object;
-use ManyManyList;
-use Form;
-use DataList;
-use DataObjectInterface;
-use GridField;
-use GridField_ColumnProvider;
-use GridFieldDataColumns;
+use SilverStripe\Core\Convert;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\ManyManyList;
+use SilverStripe\Forms\Form;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObjectInterface;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_ColumnProvider;
+use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use Exception;
+use SilverStripe\ORM\ValidationException;
+use Symbiote\GridFieldExtensions\GridFieldAddNewInlineButton;
+use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
 
-class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implements
-    GridField_ColumnProvider
+class AddNewOrExistingInlineButton extends GridFieldAddNewInlineButton implements GridField_ColumnProvider
 {
 
     /** @var string The reference field that will be shown in dropdown */
@@ -71,23 +75,23 @@ class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implemen
      * If the record exists, will use the valFieldAfterSave callback, otherwise
      * it will try to find an object by ID, and if it can't it will save to valFieldAfterSave
      *
-     * @param \GridField $grid
-     * @param \DataObjectInterface $record
+     * @param GridField $grid
+     * @param DataObjectInterface $record
      *
-     * @throws \ValidationException
+     * @throws ValidationException
      */
     public function handleSave(GridField $grid, DataObjectInterface $record)
     {
         $list = $grid->getList();
         $value = $grid->Value();
 
-        $editable = $grid->getConfig()->getComponentByType('GridFieldEditableColumns');
+        $editable = $grid->getConfig()->getComponentByType(GridFieldEditableColumns::class);
 
         if ($editable) {
             $this->addFallbackValueToDisplayFields($grid, $editable);
         }
 
-        if (!isset($value['GridFieldAddNewInlineButton']) || !is_array($value['GridFieldAddNewInlineButton'])) {
+        if (!isset($value[GridFieldAddNewInlineButton::class]) || !is_array($value[GridFieldAddNewInlineButton::class])) {
             return;
         }
 
@@ -99,7 +103,7 @@ class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implemen
 
         $form = $editable->getForm($grid, $record);
 
-        foreach ($value['GridFieldAddNewInlineButton'] as $fields) {
+        foreach ($value[GridFieldAddNewInlineButton::class] as $fields) {
             $item = null;
 
             if (isset($fields['_AddOrExistingID']) && !$list->byID($fields['_AddOrExistingID'])) {
@@ -156,7 +160,7 @@ class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implemen
      * Attributes for the element containing the content returned by {@link getColumnContent()}.
      *
      * @param  GridField $gridField
-     * @param  \DataObject $record displayed in this row
+     * @param  DataObject $record displayed in this row
      * @param  string $columnName
      *
      * @return array
@@ -170,7 +174,7 @@ class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implemen
 
     /**
      * @param GridField $gridField
-     * @param \DataObject $record
+     * @param DataObject $record
      * @param string $columnName
      *
      * @return string
@@ -178,7 +182,7 @@ class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implemen
      */
     public function getColumnContent($gridField, $record, $columnName)
     {
-        if (!$editable = $gridField->getConfig()->getComponentByType('GridFieldEditableColumns')) {
+        if (!$editable = $gridField->getConfig()->getComponentByType(GridFieldEditableColumns::class)) {
             throw new Exception('Inline adding requires the editable columns component');
         }
 
@@ -255,7 +259,7 @@ class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implemen
             if (is_callable($this->valFieldCallback)) {
                 return call_user_func($this->valFieldCallback, $record);
             } else {
-                return Object::create($this->valFieldCallback, $this->valFieldAfterSave, '');
+                return Injector::inst()->create($this->valFieldCallback, $this->valFieldAfterSave, '');
             }
         }
 
@@ -267,7 +271,7 @@ class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implemen
         $attrs = '';
 
         if ($grid->getList()) {
-            $record = Object::create($grid->getModelClass());
+            $record = Injector::inst()->create($grid->getModelClass());
         } else {
             $record = null;
         }
@@ -278,7 +282,7 @@ class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implemen
 
         $field = $this->getColumnField($grid, $record, $this->valFieldAfterSave);
         $field->setName(sprintf(
-            '%s[%s][{%%=o.num%%}][%s]', $grid->getName(), 'GridFieldAddNewInlineButton', $field->getName()
+            '%s[%s][{%%=o.num%%}][%s]', $grid->getName(), GridFieldAddNewInlineButton::class, $field->getName()
         ));
 
         return str_replace('<td class="col-addOrExistingId">', '<td class="col-addOrExistingId">' . $field->Field(),
@@ -290,7 +294,7 @@ class AddNewOrExistingInlineButton extends \GridFieldAddNewInlineButton implemen
      * so it can be saved by @GridFieldEditableColumns
      *
      * @param GridField $grid
-     * @param \GridFieldDataColumns $editable
+     * @param GridFieldDataColumns $editable
      */
     private function addFallbackValueToDisplayFields(GridField $grid, GridFieldDataColumns $editable)
     {

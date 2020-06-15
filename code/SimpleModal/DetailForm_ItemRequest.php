@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils\SimpleModal;
+<?php
+namespace Milkyway\SS\GridFieldUtils\SimpleModal;
 
 /**
  * Milkyway Multimedia
@@ -8,10 +9,10 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use LeftAndMain;
-use Form;
-use Controller;
-use FieldList;
+use SilverStripe\Admin\LeftAndMain;
+use SilverStripe\Forms\Form;
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\FieldList;
 
 class DetailForm_ItemRequest extends \Milkyway\SS\GridFieldUtils\GridFieldDetailForm_ItemRequest
 {

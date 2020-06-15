@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -8,22 +9,24 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use DataList;
-use DataObjectInterface;
-use GridField;
-use GridField_ColumnProvider;
-use GridField_DataManipulator;
-use GridField_URLHandler;
-use GridField_SaveHandler;
-use FormField;
-use SS_List;
-use Form;
-use FieldList;
-use Controller;
-use Object;
-use SS_HTTPResponse_Exception;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DataObjectInterface;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_ColumnProvider;
+use SilverStripe\Forms\GridField\GridField_DataManipulator;
+use SilverStripe\Forms\GridField\GridField_URLHandler;
+use SilverStripe\Forms\GridField\GridField_SaveHandler;
+use SilverStripe\Forms\FormField;
+use SilverStripe\ORM\SS_List;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Control\Controller;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Control\HTTPResponse_Exception;
 
-class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator, GridField_URLHandler, GridField_SaveHandler
+class TagsColumn implements
+    GridField_ColumnProvider, GridField_DataManipulator, GridField_URLHandler, GridField_SaveHandler
 {
     private static $allowed_actions = [
         'form',
@@ -73,7 +76,7 @@ class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator,
     /**
      * Names of all columns which are affected by this component.
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      *
      * @return array
      */
@@ -85,8 +88,8 @@ class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator,
     /**
      * HTML for the column, content of the <td> element.
      *
-     * @param  \GridField $grid
-     * @param  \DataObject $record - Record displayed in this row
+     * @param  GridField $grid
+     * @param  DataObject $record - Record displayed in this row
      * @param  string $columnName
      *
      * @return string - HTML for the column. Return NULL to skip.
@@ -109,8 +112,8 @@ class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator,
     /**
      * Attributes for the element containing the content returned by {@link getColumnContent()}.
      *
-     * @param  \GridField $gridField
-     * @param  \DataObject $record displayed in this row
+     * @param  GridField $gridField
+     * @param  DataObject $record displayed in this row
      * @param  string $columnName
      *
      * @return array
@@ -127,7 +130,7 @@ class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator,
      * Additional metadata about the column which can be used by other components,
      * e.g. to set a title for a search column header.
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      * @param string $columnName
      *
      * @return array - Map of arbitrary metadata identifiers to their values.
@@ -163,7 +166,7 @@ class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator,
         if ($item = singleton($model)->get()->filter($this->referenceField, $params['tag'])->first()) {
             $params['record']->{$this->relation}()->add($item);
         } else {
-            $item = Object::create($model);
+            $item = Injector::inst()->create($model);
             $item->{$this->referenceField} = $params['tag'];
             $item->write();
             $params['record']->{$this->relation}()->add($item);
@@ -177,7 +180,7 @@ class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator,
         $form = $this->getForm($grid, $params['record']);
 
         if (!$form) {
-            throw new SS_HTTPResponse_Exception(null, 400);
+            throw new HTTPResponse_Exception(null, 400);
         }
 
         foreach ($form->Fields() as $field) {
@@ -192,7 +195,7 @@ class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator,
      *
      * @param GridField $grid
      * @param DataObjectInterface $record
-     * @return \Form
+     * @return Form
      */
     public function getForm(GridField $grid, DataObjectInterface $record)
     {
@@ -241,7 +244,7 @@ class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator,
         }
 
 
-        return Object::create(
+        return Injector::inst()->create(
             'Select2Field',
             $this->relation,
             $list,
@@ -265,11 +268,11 @@ class TagsColumn implements GridField_ColumnProvider, GridField_DataManipulator,
             $id = $request->param('ID');
 
             if (!ctype_digit($id)) {
-                throw new SS_HTTPResponse_Exception(null, 400);
+                throw new HTTPResponse_Exception(null, 400);
             }
 
             if (!$record = $grid->List->byID($id)) {
-                throw new SS_HTTPResponse_Exception(null, 404);
+                throw new HTTPResponse_Exception(null, 404);
             }
 
             return [

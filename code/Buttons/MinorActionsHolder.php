@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -8,10 +9,10 @@
  * @author  Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use GridField_HTMLProvider;
-use ArrayData;
-use ArrayList;
-use ViewableData;
+use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\View\ArrayData;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ViewableData;
 
 class MinorActionsHolder implements GridField_HTMLProvider
 {

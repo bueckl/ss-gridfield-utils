@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -8,17 +9,27 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use RequestHandler;
-use GridField_HTMLProvider;
-use GridField_SaveHandler;
-use GridField_URLHandler;
-use GridField_ColumnProvider;
-use Validator;
-use FieldList;
-use Session;
-use Requirements;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\HTTPResponse_Exception;
+use SilverStripe\Control\RequestHandler;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\Forms\GridField\GridField_SaveHandler;
+use SilverStripe\Forms\GridField\GridField_URLHandler;
+use SilverStripe\Forms\GridField\GridField_ColumnProvider;
+use SilverStripe\Forms\Validator;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Control\Session;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DataObjectInterface;
+use SilverStripe\ORM\ManyManyList;
+use SilverStripe\View\Requirements;
+use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
 
-class EditableRow extends RequestHandler implements GridField_HTMLProvider, GridField_SaveHandler, GridField_URLHandler, GridField_ColumnProvider
+class EditableRow extends RequestHandler implements GridField_HTMLProvider, GridField_SaveHandler, GridField_URLHandler,
+    GridField_ColumnProvider
 {
     public $column = '_OpenRowForEditing';
     public $urlSegment = 'editableRow';
@@ -89,7 +100,7 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
     /**
      * Sets the validator that will be displayed in this component
      *
-     * @param \Validator|Callable|array $validator
+     * @param Validator|Callable|array $validator
      * @return static $this
      */
     public function setValidator($validator)
@@ -159,7 +170,7 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
      * @see {@link GridFieldDataColumns->getDisplayFields()}
      * @see {@link GridFieldDataColumns}.
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      * @param           array - List reference of all column names.
      */
     public function augmentColumns($gridField, &$columns)
@@ -172,7 +183,7 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
     /**
      * Names of all columns which are affected by this component.
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      *
      * @return array
      */
@@ -184,8 +195,8 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
     /**
      * HTML for the column, content of the <td> element.
      *
-     * @param  \GridField $gridField
-     * @param  \DataObject $record - Record displayed in this row
+     * @param  GridField $gridField
+     * @param  DataObject $record - Record displayed in this row
      * @param  string $columnName
      *
      * @return string - HTML for the column. Return NULL to skip.
@@ -216,8 +227,8 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
     /**
      * Attributes for the element containing the content returned by {@link getColumnContent()}.
      *
-     * @param  \GridField $gridField
-     * @param  \DataObject $record displayed in this row
+     * @param  GridField $gridField
+     * @param  DataObject $record displayed in this row
      * @param  string $columnName
      *
      * @return array
@@ -240,7 +251,7 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
      * Additional metadata about the column which can be used by other components,
      * e.g. to set a title for a search column header.
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      * @param string $columnName
      *
      * @return array - Map of arbitrary metadata identifiers to their values.
@@ -273,7 +284,7 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
         $this->workingGrid = $grid;
     }
 
-    public function handleSave(\GridField $grid, \DataObjectInterface $record)
+    public function handleSave(GridField $grid, DataObjectInterface $record)
     {
         $list = $grid->getList();
         $value = $grid->Value();
@@ -308,8 +319,8 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
     public function getForm($grid, $record, $removeEditableColumnFields = true)
     {
         $this->workingGrid = $grid;
-        $form = \Form::create($this, $grid->ID() . '-EditableRow-' . $record->ID,
-            $this->getFieldList($record, $grid, $removeEditableColumnFields), \FieldList::create(),
+        $form = Form::create($this, $grid->ID() . '-EditableRow-' . $record->ID,
+            $this->getFieldList($record, $grid, $removeEditableColumnFields), FieldList::create(),
             $this->getValidatorForForm($record, $grid))->loadDataFrom($record)->setFormAction($this->Link('form',
             $record->ID))->disableSecurityToken();
 
@@ -332,12 +343,12 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
         $fields = null;
 
         if ($this->fields) {
-            if ($this->fields instanceof \FieldList) {
+            if ($this->fields instanceof FieldList) {
                 $fields = $this->fields;
             } elseif (is_callable($this->fields)) {
                 $fields = call_user_func_array($this->fields, [$record, $grid, $this]);
             } else {
-                $fields = \FieldList::create($this->fields);
+                $fields = FieldList::create($this->fields);
             }
         }
 
@@ -346,7 +357,7 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
                 if ($editable->getFields()) {
                     $fields = $editable->getFields();
                 } else {
-                    $fields = \Object::create($editable->getItemRequestClass(), $grid, $editable, $record,
+                    $fields = Injector::inst()->create($editable->getItemRequestClass(), $grid, $editable, $record,
                         $grid->getForm()->getController(), $editable->getName())->ItemEditForm()->Fields();
                 }
             }
@@ -356,7 +367,8 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
             $fields = $record->hasMethod('getEditableRowFields') ? $record->getEditableRowFields($grid) : $record->getCMSFields();
         }
 
-        if ($removeEditableColumnFields && $grid && $editable = $grid->getConfig()->getComponentByType('GridFieldEditableColumns')) {
+        if ($removeEditableColumnFields && $grid &&
+            $editable = $grid->getConfig()->getComponentByType(GridFieldEditableColumns::class)) {
             $editableColumns = $editable->getFields($grid, $record);
 
             foreach ($editableColumns as $column) {
@@ -370,17 +382,17 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
     protected function getValidatorForForm($record, $grid = null)
     {
         if ($this->validator) {
-            if ($this->validator instanceof \Validator) {
+            if ($this->validator instanceof Validator) {
                 return $this->validator;
             } elseif (is_callable($this->validator)) {
                 return call_user_func_array($this->validator, [$record, $grid, $this]);
             } else {
-                return \Validator::create($this->validator);
+                return Validator::create($this->validator);
             }
         }
 
         if ($grid) {
-            if ($editable = $grid->getConfig()->getComponentByType('GridFieldDetailForm')) {
+            if ($editable = $grid->getConfig()->getComponentByType(GridFieldDetailForm::class)) {
                 return $editable->getValidator();
             }
         }
@@ -458,15 +470,15 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
         $list = $grid->getList();
 
         if (!ctype_digit($id)) {
-            throw new \SS_HTTPResponse_Exception(null, 400);
+            throw new HTTPResponse_Exception(null, 400);
         }
 
         if (!$record = $list->byID($id)) {
-            throw new \SS_HTTPResponse_Exception(null, 404);
+            throw new HTTPResponse_Exception(null, 404);
         }
 
         if ($this->setWorkingParentOnRecordTo) {
-            if ($grid->List && ($grid->List instanceof \ManyManyList) && $grid->Form && $grid->Form->Record) {
+            if ($grid->List && ($grid->List instanceof ManyManyList) && $grid->Form && $grid->Form->Record) {
                 $record->{$this->setWorkingParentOnRecordTo} = $grid->Form->Record;
             }
         }
@@ -476,7 +488,7 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
 
     public function Link($action = null, $id = null)
     {
-        return $this->workingGrid ? \Controller::join_links($this->workingGrid->Link($this->urlSegment), $action,
+        return $this->workingGrid ? Controller::join_links($this->workingGrid->Link($this->urlSegment), $action,
             $id) : null;
     }
 

@@ -1,4 +1,6 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -8,7 +10,7 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use GridFieldDetailForm as Original;
+use SilverStripe\Forms\GridField\GridFieldDetailForm as Original;
 
 class GridFieldDetailForm extends Original
 {

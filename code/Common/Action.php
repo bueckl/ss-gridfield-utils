@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils\Common;
+<?php
+namespace Milkyway\SS\GridFieldUtils\Common;
 
 /**
  * Milkyway Multimedia
@@ -8,8 +9,10 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use GridField_ColumnProvider;
-use GridField_ActionProvider;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_ColumnProvider;
+use SilverStripe\Forms\GridField\GridField_ActionProvider;
+use SilverStripe\ORM\DataObjectInterface;
 
 abstract class Action implements GridField_ColumnProvider, GridField_ActionProvider
 {
@@ -18,7 +21,7 @@ abstract class Action implements GridField_ColumnProvider, GridField_ActionProvi
     /**
      * Add a column 'Delete'
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      * @param array $columns
      */
     public function augmentColumns($gridField, &$columns)
@@ -31,8 +34,8 @@ abstract class Action implements GridField_ColumnProvider, GridField_ActionProvi
     /**
      * Return any special attributes that will be used for FormField::create_tag()
      *
-     * @param \GridField $gridField
-     * @param \DataObjectInterface $record
+     * @param GridField $gridField
+     * @param DataObjectInterface $record
      * @param string $columnName
      * @return array
      */
@@ -44,7 +47,7 @@ abstract class Action implements GridField_ColumnProvider, GridField_ActionProvi
     /**
      * Add the title
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      * @param string $columnName
      * @return array
      */
@@ -58,7 +61,7 @@ abstract class Action implements GridField_ColumnProvider, GridField_ActionProvi
     /**
      * Which columns are handled by this component
      *
-     * @param \GridField $gridField
+     * @param GridField $gridField
      * @return array
      */
     public function getColumnsHandled($gridField)

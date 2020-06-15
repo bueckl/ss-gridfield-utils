@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
 
 /**
  * Milkyway Multimedia
@@ -8,9 +9,29 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use Session;
+use Psr\SimpleCache\CacheInterface;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\RequestHandler;
+use SilverStripe\Control\Session;
+use SilverStripe\Core\Flushable;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\Forms\GridField\GridField_SaveHandler;
+use SilverStripe\Forms\GridField\GridField_URLHandler;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\Validator;
+use SilverStripe\ORM\DataObjectInterface;
+use SilverStripe\ORM\DB;
+use SilverStripe\ORM\HasManyList;
+use SilverStripe\View\ArrayData;
+use SilverStripe\View\Requirements;
+use Symbiote\GridFieldExtensions\GridFieldAddNewInlineButton;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
-class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLProvider, \GridField_SaveHandler, \GridField_URLHandler, \Flushable
+class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvider, GridField_SaveHandler, GridField_URLHandler, Flushable
 {
     public $urlSegment = 'extendedInline';
 
@@ -64,7 +85,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
     /**
      * @param string $fragment the fragment to render the button in
      * @param string $title the text to display on the button
-     * @param \FieldList|Callable|array $fields the fields to display in inline form
+     * @param FieldList|Callable|array $fields the fields to display in inline form
      */
     public function __construct($fragment = 'buttons-before-left', $title = '', $fields = null)
     {
@@ -73,8 +94,9 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
         $this->title = $title ?: _t('GridFieldExtensions.ADD', 'Add');
         $this->fields = $fields;
 
-        $this->cache = \SS_Cache::factory($this->getCacheKey(['holder' => __CLASS__]), 'Output',
-            ['lifetime' => 6 * 60 * 60]);
+//        $this->cache = \SS_Cache::factory($this->getCacheKey(['holder' => __CLASS__]), 'Output',
+//            ['lifetime' => 6 * 60 * 60]);
+        $this->cache = Injector::inst()->create(CacheInterface::class . $this->getCacheKey(['holder' => __CLASS__]));
     }
 
     public function getURLHandlers($gridField)
@@ -134,7 +156,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
     /**
      * Gets the fields for this class
      *
-     * @return \FieldList|Callable|array
+     * @return FieldList|Callable|array
      */
     public function getFields()
     {
@@ -144,7 +166,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
     /**
      * Sets the fields that will be displayed in this component
      *
-     * @param \FieldList|Callable|array $fields
+     * @param FieldList|Callable|array $fields
      * @return static $this
      */
     public function setFields($fields)
@@ -157,7 +179,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
     /**
      * Gets the validator
      *
-     * @return \Validator|Callable|array
+     * @return Validator|Callable|array
      */
     public function getValidator()
     {
@@ -167,7 +189,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
     /**
      * Sets the validator that will be displayed in this component
      *
-     * @param \Validator|Callable|array $validator
+     * @param Validator|Callable|array $validator
      * @return static $this
      */
     public function setValidator($validator)
@@ -216,7 +238,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
         ];
 
         if (!$this->loadViaAjax) {
-            \Requirements::javascript(THIRDPARTY_DIR . '/javascript-templates/tmpl.js');
+            Requirements::javascript(THIRDPARTY_DIR . '/javascript-templates/tmpl.js');
             $fragments['after'] = isset($fragments['after']) ? $fragments['after'] . $this->getRowTemplate($grid) : $this->getRowTemplate($grid);
         }
 
@@ -227,7 +249,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
 
     protected function getButtonFragment($grid)
     {
-        return \ArrayData::create([
+        return ArrayData::create([
             'Title' => $this->getTitle(),
             'Ajax'  => $this->loadViaAjax,
             'Link'  => $this->loadViaAjax ? $this->Link('load') : '',
@@ -236,7 +258,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
 
     protected function getRowTemplate($grid)
     {
-        return \ArrayData::create($this->getRowTemplateVariables($grid))
+        return ArrayData::create($this->getRowTemplateVariables($grid))
             ->renderWith(array_merge((array)$this->template, ['GridField_AddNewInlineExtended']));
     }
 
@@ -246,7 +268,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
             $modelClass)->setHTMLID('Form-' . $this->getComponentName() . '-' . $placeholder);
 
         if ($modelClass && !$form->Fields()->dataFieldByName('_modelClass')) {
-            $form->Fields()->push(\HiddenField::create('_modelClass', '', $modelClass));
+            $form->Fields()->push(HiddenField::create('_modelClass', '', $modelClass));
         }
 
         $fields = $form->Fields()->dataFields();
@@ -264,7 +286,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
         if ($this->canEditWithEditableColumns($grid) && ($editableColumns = $grid->Config->getComponentByType('GridFieldEditableColumns'))) {
             $currentModelClass = $grid->getModelClass();
             $grid->setModelClass($modelClass);
-            $ecFragments = (new \GridFieldAddNewInlineButton())->getHTMLFragments($grid);
+            $ecFragments = (new GridFieldAddNewInlineButton())->getHTMLFragments($grid);
             $grid->setModelClass($currentModelClass);
             $toggleClasses = $this->openToggleByDefault ? ' ss-gridfield-add-inline-extended--toggle_open' : '';
 
@@ -304,7 +326,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
         ];
     }
 
-    public function handleSave(\GridField $grid, \DataObjectInterface $record)
+    public function handleSave(GridField $grid, DataObjectInterface $record)
     {
         $list = $grid->getList();
         $value = $grid->Value();
@@ -323,7 +345,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
         $form = $this->getForm($grid, '', false);
         $id = $grid->ID();
 
-        $orderable = $grid->Config->getComponentByType('GridFieldOrderableRows');
+        $orderable = $grid->Config->getComponentByType(GridFieldOrderableRows::class);
         $sortField = $orderable ? $orderable->getSortField() : '';
         $max = $sortField && !$this->prepend ? $orderable->getManipulatedData($grid,
                 $list)->max($sortField) + 1 : false;
@@ -331,7 +353,8 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
         $itemIds = [];
 
         foreach ($value[$componentName] as $fields) {
-            $item = isset($fields['_modelClass']) ? \Object::create($fields['_modelClass']) : \Object::create($class);
+            $item = isset($fields['_modelClass']) ?
+                Injector::inst()->create('_modelClass') : Injector::inst()->create($class);
 
             $form->loadDataFrom($fields);
             $form->saveInto($item);
@@ -359,7 +382,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
 
         // Fix other sorts for prepends in one query
         if ($sortField && $max === false) {
-            \DB::query(sprintf(
+            DB::query(sprintf(
                 'UPDATE "%s" SET "%s" = %s + %d WHERE %s',
                 $orderable->getSortTable($list),
                 $sortField,
@@ -373,8 +396,8 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
     protected function getForm($grid, $append = '', $removeEditableColumnFields = true, $modelClass = '')
     {
         $this->workingGrid = $grid;
-        $form = \Form::create($this, 'Form-' . $grid->getModelClass() . $append,
-            $this->getFieldList($grid, $removeEditableColumnFields, $modelClass), \FieldList::create(),
+        $form = Form::create($this, 'Form-' . $grid->getModelClass() . $append,
+            $this->getFieldList($grid, $removeEditableColumnFields, $modelClass), FieldList::create(),
             $this->getValidatorForForm($grid, $modelClass))->loadDataFrom($this->getRecordFromGrid($grid, $modelClass));
 
         if ($form->Fields()->hasTabSet() && ($root = $form->Fields()->findOrMakeTab('Root')) && $root->Template == 'CMSTabSet') {
@@ -396,13 +419,13 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
         $fields = null;
 
         if ($this->fields) {
-            if ($this->fields instanceof \FieldList) {
+            if ($this->fields instanceof FieldList) {
                 $fields = $this->fields;
             } elseif (is_callable($this->fields)) {
                 $fields = call_user_func_array($this->fields,
                     [$this->getRecordFromGrid($grid, $modelClass), $grid, $this]);
             } else {
-                $fields = \FieldList::create($this->fields);
+                $fields = FieldList::create($this->fields);
             }
         }
 
@@ -441,13 +464,13 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
     protected function getValidatorForForm($grid = null, $modelClass = '')
     {
         if ($this->validator) {
-            if ($this->validator instanceof \Validator) {
+            if ($this->validator instanceof Validator) {
                 return $this->validator;
             } elseif (is_callable($this->validator)) {
                 return call_user_func_array($this->validator,
                     [$this->getRecordFromGrid($grid, $modelClass), $grid, $this]);
             } else {
-                return \Validator::create($this->validator);
+                return Validator::create($this->validator);
             }
         }
 
@@ -461,9 +484,9 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
                 $class = $grid->getModelClass();
             }
 
-            $record = \Object::create($class);
+            $record = Injector::inst()->create($class);
 
-            if ($grid->List && ($grid->List instanceof \HasManyList) && $grid->Form && $grid->Form->Record) {
+            if ($grid->List && ($grid->List instanceof HasManyList) && $grid->Form && $grid->Form->Record) {
                 $record->{$grid->Name} = $grid->Form->Record;
                 $record->{$grid->Name . 'ID'} = $grid->Form->Record->ID;
             } else {
@@ -508,7 +531,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
         ]);
 
         if (!$this->cacheAjaxLoading || !($template = unserialize($this->cache->load($cacheKey)))) {
-            $template = \ArrayData::create(array_merge(
+            $template = ArrayData::create(array_merge(
                 $this->getRowTemplateVariables($grid, '{{ placeholder }}', $modelClass), [
                     'Ajax'        => true,
                     'placeholder' => '{{ placeholder }}',
@@ -525,7 +548,7 @@ class AddNewInlineExtended extends \RequestHandler implements \GridField_HTMLPro
 
     public function Link($action = '')
     {
-        return $this->workingGrid ? \Controller::join_links($this->workingGrid->Link($this->urlSegment),
+        return $this->workingGrid ? Controller::join_links($this->workingGrid->Link($this->urlSegment),
             $action) : null;
     }
 

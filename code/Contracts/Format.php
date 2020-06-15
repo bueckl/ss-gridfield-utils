@@ -1,4 +1,5 @@
-<?php namespace Milkyway\SS\GridFieldUtils\Contracts;
+<?php
+namespace Milkyway\SS\GridFieldUtils\Contracts;
 
 /**
  * Milkyway Multimedia
@@ -8,7 +9,7 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-use GridField;
+use SilverStripe\Forms\GridField\GridField;
 
 interface Format
 {

@@ -1,4 +1,28 @@
-<?php namespace Milkyway\SS\GridFieldUtils;
+<?php
+namespace Milkyway\SS\GridFieldUtils;
+
+use phpDocumentor\Reflection\Types\Boolean;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Forms\CurrencyField;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_ActionProvider;
+use SilverStripe\Forms\GridField\GridField_DataManipulator;
+use SilverStripe\Forms\GridField\GridField_FormAction;
+use SilverStripe\Forms\GridField\GridField_HTMLProvider;
+use SilverStripe\Forms\LabelField;
+use SilverStripe\Forms\MoneyField;
+use SilverStripe\ORM\FieldType\DBDate;
+use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\ORM\FieldType\DBDecimal;
+use SilverStripe\ORM\FieldType\DBDouble;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBFloat;
+use SilverStripe\ORM\FieldType\DBInt;
+use SilverStripe\ORM\FieldType\DBPercentage;
+use SilverStripe\ORM\FieldType\DBTime;
+use SilverStripe\ORM\FieldType\DBYear;
+use SilverStripe\ORM\SS_List;
+use SilverStripe\View\ArrayData;
 
 /**
  * Milkyway Multimedia
@@ -8,7 +32,7 @@
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulator, \GridField_HTMLProvider
+class RangeSlider implements GridField_ActionProvider, GridField_DataManipulator, GridField_HTMLProvider
 {
     public $filterField;
 
@@ -29,7 +53,7 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
 
     public function __construct($filterField = 'Created', $fragment = 'header', $label = '', $navigationLabel = '')
     {
-        if (!\ClassInfo::exists('RangeSliderField')) {
+        if (!ClassInfo::exists('RangeSliderField')) {
             throw new \LogicException('Please install the milkyway-multimedia/ss-mwm-formfields module to use this feature');
         }
 
@@ -62,7 +86,7 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
         return array_get($this->sliderSettings, $setting);
     }
 
-    public function handleAction(\GridField $gridField, $actionName, $arguments, $data)
+    public function handleAction(GridField $gridField, $actionName, $arguments, $data)
     {
         $state = $gridField->State->Milkyway_SS_GridFieldUtils_RangeSlider;
 
@@ -77,11 +101,11 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
 
     /**
      *
-     * @param \GridField $gridField
-     * @param \SS_List $dataList
-     * @return \SS_List
+     * @param GridField $gridField
+     * @param SS_List $dataList
+     * @return SS_List
      */
-    public function getManipulatedData(\GridField $gridField, \SS_List $dataList)
+    public function getManipulatedData(GridField $gridField, SS_List $dataList)
     {
         $state = $gridField->State->Milkyway_SS_GridFieldUtils_RangeSlider;
 
@@ -141,9 +165,9 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
             $settings['value'] = [$state->min, $state->max];
         }
 
-        $data['Slider'] = \RangeSliderField::create($fieldName, null, null, $settings)->addExtraClass('ss-gridfield-range-slider--field');
+        $data['Slider'] = RangeSliderField::create($fieldName, null, null, $settings)->addExtraClass('ss-gridfield-range-slider--field');
 
-        $data['Button'] = \GridField_FormAction::create($gridField, 'filter', 'Filter', 'filterByRange', null)
+        $data['Button'] = GridField_FormAction::create($gridField, 'filter', 'Filter', 'filterByRange', null)
             ->addExtraClass('ss-gridfield-range-slider--button')
             ->setAttribute('title', _t('GridField.Filter', 'Filter'))
             ->setAttribute('id', 'action_filter_' . $gridField->getModelClass() . '_' . $this->filterField);
@@ -162,14 +186,14 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
             }
 
             if ($this->navigationLabel) {
-                $fields->unshift(\ArrayData::create([
-                    'Render' => \LabelField::create($fieldName . '[label]', $this->navigationLabel)
+                $fields->unshift(ArrayData::create([
+                    'Render' => LabelField::create($fieldName . '[label]', $this->navigationLabel)
                 ]));
             }
 
             if (isset($data['Label']) && $data['Label']) {
-                $fields->unshift(\ArrayData::create([
-                    'Render' => \LabelField::create($fieldName . '--LABEL', $data['Label'])->addExtraClass('ss-gridfield-range-slider--holder-label')
+                $fields->unshift(ArrayData::create([
+                    'Render' => LabelField::create($fieldName . '--LABEL', $data['Label'])->addExtraClass('ss-gridfield-range-slider--holder-label')
                 ]));
             }
         };
@@ -179,13 +203,13 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
         $data['HideNavigation'] = $this->hideNavigation;
 
         return [
-            $this->fragment => \ArrayData::create($data)->renderWith(array_merge((array)$this->template, ['GridField_RangeSlider_Row'])),
+            $this->fragment => ArrayData::create($data)->renderWith(array_merge((array)$this->template, ['GridField_RangeSlider_Row'])),
         ];
     }
 
-    protected function scaffoldSliderSettingsForField(\DBField $dbField, $dataList = null)
+    protected function scaffoldSliderSettingsForField(DBField $dbField, $dataList = null)
     {
-        if ($dbField instanceof \Boolean) {
+        if ($dbField instanceof Boolean) {
             $this->comparisonFilter = null;
 
             return [
@@ -196,8 +220,8 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
                     'max' => 2,
                 ],
             ];
-        } elseif ($dbField instanceof \Date) {
-            $format = ($dbField instanceof \SS_Datetime) ? 'd/m/Y h:i' : 'd/m/Y';
+        } elseif ($dbField instanceof DBDate) {
+            $format = ($dbField instanceof DBDatetime) ? 'd/m/Y h:i' : 'd/m/Y';
 
             $response = [
                 'start' => [date($format, strtotime('-1 year')), date($format)],
@@ -205,7 +229,7 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
                     'min' => strtotime('-10 years'),
                     'max' => time(),
                 ],
-                'format' => ($dbField instanceof \SS_Datetime) ? 'date::DD/MM/YYYY hh:mm' : 'date::DD/MM/YYYY',
+                'format' => ($dbField instanceof DBDatetime) ? 'date::DD/MM/YYYY hh:mm' : 'date::DD/MM/YYYY',
                 'connect' => true,
             ];
 
@@ -215,17 +239,18 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
             }
 
             if ($this->getSliderSetting('pips')) {
-                $this->setSliderSetting('pips.format', ($dbField instanceof \SS_Datetime) ? 'date::DD/MM/YYYY' : 'date::DD/MM/YYYY');
+                $this->setSliderSetting('pips.format',
+                    ($dbField instanceof DBDatetime) ? 'date::DD/MM/YYYY' : 'date::DD/MM/YYYY');
             }
 
             return $response;
         } elseif (
-            ($dbField instanceof \Currency)
-            || ($dbField instanceof \Decimal)
-            || ($dbField instanceof \Double)
-            || ($dbField instanceof \Float)
-            || ($dbField instanceof \Percentage)
-            || ($dbField instanceof \Money)
+            ($dbField instanceof CurrencyField)
+            || ($dbField instanceof DBDecimal)
+            || ($dbField instanceof DBDouble)
+            || ($dbField instanceof DBFloat)
+            || ($dbField instanceof DBPercentage)
+            || ($dbField instanceof MoneyField)
         ) {
             return [
                 'start' => 50.00,
@@ -234,7 +259,7 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
                     'max' => 100.00,
                 ],
             ];
-        } elseif ($dbField instanceof \Int) {
+        } elseif ($dbField instanceof DBInt) {
             return [
                 'start' => 5,
                 'range' => [
@@ -242,7 +267,7 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
                     'max' => 10,
                 ],
             ];
-        } elseif ($dbField instanceof \Time) {
+        } elseif ($dbField instanceof DBTime) {
             return [
                 'start' => strtotime(date('d/m/Y') . ' 12:00'),
                 'range' => [
@@ -250,7 +275,7 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
                     'max' => strtotime(date('d/m/Y') . ' 23:59'),
                 ],
             ];
-        } elseif ($dbField instanceof \Year) {
+        } elseif ($dbField instanceof DBYear) {
             return [
                 'start' => date(strtotime('-10 years'), 'Y'),
                 'range' => [
@@ -265,7 +290,7 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
 
     protected function getValueForDB($dbField, $value)
     {
-        if (($dbField instanceof \Date) || ($dbField instanceof \Time)) {
+        if (($dbField instanceof DBDate) || ($dbField instanceof DBTime)) {
             $value = strtotime(str_replace('/', '-', $value));
         }
 
@@ -274,7 +299,7 @@ class RangeSlider implements \GridField_ActionProvider, \GridField_DataManipulat
         return $value;
     }
 
-    protected function modifyFormFieldForDBField(\DBField $dbField, $field, $settings = [])
+    protected function modifyFormFieldForDBField(DBField $dbField, $field, $settings = [])
     {
         $field->setAttribute('readonly', 'readonly');
     }

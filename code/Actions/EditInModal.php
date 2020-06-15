@@ -9,16 +9,20 @@
 namespace Milkyway\SS\GridFieldUtils;
 
 use Milkyway\SS\GridFieldUtils\Common\HasModal;
-use ArrayData;
-use Controller;
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldEditButton;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\View\ArrayData;
 
-class EditInModal extends \GridFieldEditButton
+
+class EditInModal extends GridFieldEditButton
 {
     use HasModal;
 
     /**
-     * @param \GridField $gridField
-     * @param \DataObject $record
+     * @param GridField $gridField
+     * @param DataObject $record
      * @param string $columnName
      *
      * @return string - the HTML for the column

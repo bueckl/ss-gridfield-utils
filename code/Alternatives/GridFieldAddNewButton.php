@@ -9,10 +9,10 @@
 
 namespace Milkyway\SS\GridFieldUtils;
 
-use ArrayData;
-use Controller;
+use SilverStripe\Control\Controller;
+use SilverStripe\View\ArrayData;
 
-class GridFieldAddNewButton extends \GridFieldAddNewButton
+class GridFieldAddNewButton extends \SilverStripe\Forms\GridField\GridFieldAddNewButton
 {
     public $gridFieldDetailForm;
 
