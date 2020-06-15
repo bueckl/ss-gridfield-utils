@@ -36,8 +36,9 @@ class DetailForm_ItemRequest extends \Milkyway\SS\GridFieldUtils\GridFieldDetail
         return parent::ItemEditForm();
     }
 
-    public function doSave($data, $form, $request)
+    public function doSave($data, $form)
     {
+        $request = $this->getRequest();
         if ($handler = $this->component->getSaveHandler()) {
             return call_user_func($handler, [
                 'data'       => $data,
