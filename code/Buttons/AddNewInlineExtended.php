@@ -84,7 +84,9 @@ class AddNewInlineExtended extends RequestHandler implements
 
     public function cleanCache()
     {
-        $this->cache->clean();
+        if($this->cache) {
+            $this->cache->clean();
+        }
     }
 
     /**
@@ -101,7 +103,9 @@ class AddNewInlineExtended extends RequestHandler implements
 
 //        $this->cache = \SS_Cache::factory($this->getCacheKey(['holder' => __CLASS__]), 'Output',
 //            ['lifetime' => 6 * 60 * 60]);
-        $this->cache = Injector::inst()->create(CacheInterface::class . $this->getCacheKey(['holder' => __CLASS__]));
+//        $this->cache = Injector::inst()->create(CacheInterface::class .
+//            $this->getCacheKey(['holder' => __CLASS__]));
+        //had to dissaple cache later this want to fixed *****
     }
 
     public function getURLHandlers($gridField)
