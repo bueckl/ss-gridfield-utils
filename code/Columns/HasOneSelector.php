@@ -74,7 +74,8 @@ class HasOneSelector implements GridField_ColumnProvider, GridField_SaveHandler,
      */
     public function getColumnContent($gridField, $record, $columnName)
     {
-        $value = $gridField && $gridField->Form && $gridField->Form->Record ? $gridField->Form->Record->{$this->relation . 'ID'} : '';
+        $value = $gridField && $gridField->Form && $gridField->Form->Record ?
+            $gridField->Form->Record->{$this->relation . 'ID'} : '';
 
         return $record->ID ? _t(
             'GridField_HasOneSelector.SELECTOR',
@@ -139,7 +140,8 @@ class HasOneSelector implements GridField_ColumnProvider, GridField_SaveHandler,
         }
 
         if ($record->hasMethod('save' . $this->relation . 'FromGridField')) {
-            $record->{'save' . $this->relation . 'FromGridField'}((int)$value[str_replace('\\', '_', __CLASS__)],
+            $record->{'save' . $this->relation . 'FromGridField'}
+            ((int)$value[str_replace('\\', '_', __CLASS__)],
                 $value);
         } else {
             $record->{$this->relation . 'ID'} = (int)$value[str_replace('\\', '_', __CLASS__)];

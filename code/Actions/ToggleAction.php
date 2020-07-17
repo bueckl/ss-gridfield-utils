@@ -9,6 +9,7 @@ namespace Milkyway\SS\GridFieldUtils;
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
+use http\Env;
 use Milkyway\SS\GridFieldUtils\Common\Action;
 use LogicException;
 use SilverStripe\Forms\GridField\GridField;
@@ -70,7 +71,7 @@ class ToggleAction extends Action
         }
 
         if (static::$include_font_css) {
-            Requirements::css(singleton('env')->get('CDN.font-awesome',
+            Requirements::css(singleton(Env::class)->get('CDN.font-awesome',
                 'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css'
             ));
         }
@@ -167,7 +168,8 @@ class ToggleAction extends Action
                     $check = $this->field['field'];
                 }
             } else {
-                throw new LogicException(__CLASS__ . ' requires a field to check, please make sure the key "field" is set');
+                throw new LogicException(__CLASS__ .
+                    ' requires a field to check, please make sure the key "field" is set');
             }
         }
 

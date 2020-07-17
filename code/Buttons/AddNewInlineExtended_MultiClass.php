@@ -84,7 +84,8 @@ class AddNewInlineExtended_MultiClass extends AddNewInlineExtended
 
         if ($this->showEmptyString) {
             $field->setEmptyString($this->showEmptyString !== true ?
-                $this->showEmptyString : _t('GridFieldExtensions.SELECTTYPETOCREATE', '(Select type to create)'));
+                $this->showEmptyString :
+                _t('GridFieldExtensions.SELECTTYPETOCREATE', '(Select type to create)'));
         }
 
         return ArrayData::create([

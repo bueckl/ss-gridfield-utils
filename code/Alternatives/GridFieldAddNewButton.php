@@ -63,7 +63,8 @@ class GridFieldAddNewButton extends \SilverStripe\Forms\GridField\GridFieldAddNe
         } elseif ($this->gridFieldDetailForm) {
             return $gridField->Link($this->gridFieldDetailForm);
         } else {
-            return ($df = $gridField->Config->getComponentByType('Milkyway\SS\GridFieldUtils\GridFieldDetailForm')) && isset($df->uriSegment) ? $gridField->Link($df->getUriSegment()) : $gridField->Link('item');
+            return ($df = $gridField->Config->getComponentByType(GridFieldDetailForm::class)) &&
+            isset($df->uriSegment) ? $gridField->Link($df->getUriSegment()) : $gridField->Link('item');
         }
     }
 }

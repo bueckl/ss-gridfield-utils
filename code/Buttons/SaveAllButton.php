@@ -72,7 +72,8 @@ class SaveAllButton implements GridField_HTMLProvider, GridField_ActionProvider
             null
         );
 
-        $button->setAttribute('data-icon', 'disk')->addExtraClass('new new-link ui-button-text-icon-primary');
+        $button->setAttribute('data-icon', 'disk')
+            ->addExtraClass('new new-link ui-button-text-icon-primary');
 
         if($this->removeChangeFlagOnFormOnSave) {
             $button->addExtraClass('js-mwm-gridfield--saveall');

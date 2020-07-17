@@ -324,7 +324,8 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
             $this->getValidatorForForm($record, $grid))->loadDataFrom($record)->setFormAction($this->Link('form',
             $record->ID))->disableSecurityToken();
 
-        if ($form->Fields()->hasTabSet() && ($root = $form->Fields()->findOrMakeTab('Root')) && $root->Template == 'CMSTabSet') {
+        if ($form->Fields()->hasTabSet() && ($root = $form->Fields()->findOrMakeTab('Root')) &&
+            $root->Template == 'CMSTabSet') {
             $root->setTemplate('');
             $form->removeExtraClass('cms-tabset');
         }
@@ -353,7 +354,7 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
         }
 
         if (!$fields && $grid) {
-            if ($editable = $grid->getConfig()->getComponentByType(\SilverStripe\Forms\GridField\GridFieldDetailForm::class)) {
+            if ($editable = $grid->getConfig()->getComponentByType(GridFieldDetailForm::class)) {
                 if ($editable->getFields()) {
                     $fields = $editable->getFields();
                 } else {
@@ -364,7 +365,8 @@ class EditableRow extends RequestHandler implements GridField_HTMLProvider, Grid
         }
 
         if (!$fields) {
-            $fields = $record->hasMethod('getEditableRowFields') ? $record->getEditableRowFields($grid) : $record->getCMSFields();
+            $fields = $record->hasMethod('getEditableRowFields') ? $record->getEditableRowFields($grid) :
+                $record->getCMSFields();
         }
 
         if ($removeEditableColumnFields && $grid &&

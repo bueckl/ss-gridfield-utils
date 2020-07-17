@@ -114,11 +114,14 @@ class FormatSwitcher implements GridField_HTMLProvider, GridField_DataManipulato
 
         $currentFormat = $this->getFormatState($gridField)->current;
         $formats = ArrayList::create();
-        $icon = '<i class="ss-gridfield--format-switcher--button-icon"></i><i class="ss-gridfield--format-switcher--button-icon"></i><i class="ss-gridfield--format-switcher--button-icon"></i>';
+        $icon = '<i class="ss-gridfield--format-switcher--button-icon"></i>
+<i class="ss-gridfield--format-switcher--button-icon"></i><i class="ss-gridfield--format-switcher--button-icon"></i>';
 
-        $action = Button::create($gridField, 'unformatted', _t('GridField_FormatSwitcher.' . $this->unformatted['title'], $this->unformatted['title']), $this->urlSegment, $this->unformatted['state']);
+        $action = Button::create($gridField, 'unformatted', _t('GridField_FormatSwitcher.' .
+            $this->unformatted['title'], $this->unformatted['title']), $this->urlSegment, $this->unformatted['state']);
         $action->ButtonContent = $icon . $action->Title();
-        $action->addExtraClass('ss-gridfield--format-switcher--button ss-gridfield--format-switcher--button_' . $this->unformatted['state']);
+        $action->addExtraClass('ss-gridfield--format-switcher--button ss-gridfield--format-switcher--button_' .
+            $this->unformatted['state']);
 
         if($currentFormat == $this->unformatted['state']) {
             $action = $action
@@ -143,7 +146,8 @@ class FormatSwitcher implements GridField_HTMLProvider, GridField_DataManipulato
 
             $action = Button::create($gridField, $formatState, $title, $this->urlSegment, $formatState);
             $action->ButtonContent = $icon . $action->Title();
-            $action->addExtraClass('ss-gridfield--format-switcher--button ss-gridfield--format-switcher--button_' . str_replace(' ', '-', $formatState));
+            $action->addExtraClass('ss-gridfield--format-switcher--button ss-gridfield--format-switcher--button_'
+                . str_replace(' ', '-', $formatState));
 
             if($formatState == $currentFormat) {
                 $action = $action
@@ -213,7 +217,8 @@ class FormatSwitcher implements GridField_HTMLProvider, GridField_DataManipulato
             $gridField->removeExtraClass('ss-gridfield_' . $this->unformatted['state']);
 
             if(is_array($this->formats[$currentState]) && isset($this->formats[$currentState]['format'])) {
-                call_user_func($this->formats[$currentState]['format'], $gridField, ($currentState ?: $this->unformatted['state']));
+                call_user_func($this->formats[$currentState]['format'], $gridField, ($currentState ?:
+                    $this->unformatted['state']));
             }
             else if(is_callable($this->formats[$currentState])) {
                 call_user_func($this->formats[$currentState], $gridField, ($currentState ?: $this->unformatted['state']));

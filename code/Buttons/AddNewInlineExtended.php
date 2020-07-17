@@ -29,9 +29,14 @@ use SilverStripe\ORM\HasManyList;
 use SilverStripe\View\ArrayData;
 use SilverStripe\View\Requirements;
 use Symbiote\GridFieldExtensions\GridFieldAddNewInlineButton;
+use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
-class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvider, GridField_SaveHandler, GridField_URLHandler, Flushable
+class AddNewInlineExtended extends RequestHandler implements
+    GridField_HTMLProvider,
+    GridField_SaveHandler,
+    GridField_URLHandler,
+    Flushable
 {
     public $urlSegment = 'extendedInline';
 
@@ -239,7 +244,8 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
 
         if (!$this->loadViaAjax) {
             Requirements::javascript(THIRDPARTY_DIR . '/javascript-templates/tmpl.js');
-            $fragments['after'] = isset($fragments['after']) ? $fragments['after'] . $this->getRowTemplate($grid) : $this->getRowTemplate($grid);
+            $fragments['after'] = isset($fragments['after']) ? $fragments['after'] .
+                $this->getRowTemplate($grid) : $this->getRowTemplate($grid);
         }
 
         Utilities::include_requirements();
@@ -283,7 +289,8 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
             ));
         }
 
-        if ($this->canEditWithEditableColumns($grid) && ($editableColumns = $grid->Config->getComponentByType('GridFieldEditableColumns'))) {
+        if ($this->canEditWithEditableColumns($grid) &&
+            ($editableColumns = $grid->Config->getComponentByType(GridFieldEditableColumns::class))) {
             $currentModelClass = $grid->getModelClass();
             $grid->setModelClass($modelClass);
             $ecFragments = (new GridFieldAddNewInlineButton())->getHTMLFragments($grid);
@@ -302,7 +309,8 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
                     $this->getComponentName(),
                     $this->getComponentName(),
                     $placeholder,
-                    sprintf('ss-gridfield-editable-row--icon-holder"><i class="ss-gridfield-add-inline-extended--toggle%s"></i>',
+                    sprintf('ss-gridfield-editable-row--icon-holder">
+<i class="ss-gridfield-add-inline-extended--toggle%s"></i>',
                         $toggleClasses),
                     'ss-gridfield-inline-new-extended" data-inline-new-extended-row="' . $placeholder . '"',
                     'ss-gridfield-inline-new-extended--row-delete',
@@ -321,7 +329,8 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
             'ColumnCountWithoutActions' => count($grid->getColumns()) - $countUntilThisColumn - 1,
             'PrevColumnsCount'          => $countUntilThisColumn,
             'Model'                     => (($record = $this->getRecordFromGrid($grid,
-                    $modelClass)) && $record->hasMethod('i18n_singular_name')) ? $record->i18n_singular_name() : _t('GridFieldUtils.ITEM',
+                    $modelClass)) && $record->hasMethod('i18n_singular_name')) ?
+                $record->i18n_singular_name() : _t('GridFieldUtils.ITEM',
                 'Item'),
         ];
     }
@@ -377,7 +386,8 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
             $list->add($item, $extra);
             $itemIds[] = $item->ID;
 
-            Session::set('EditableRowToggles.' . $id . '.' . get_class($item) . '_' . $item->ID, true);
+            $this->getRequest()->getSession()->set('EditableRowToggles.' . $id . '.' . get_class($item) . '_'
+                . $item->ID, true);
         }
 
         // Fix other sorts for prepends in one query
@@ -400,7 +410,8 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
             $this->getFieldList($grid, $removeEditableColumnFields, $modelClass), FieldList::create(),
             $this->getValidatorForForm($grid, $modelClass))->loadDataFrom($this->getRecordFromGrid($grid, $modelClass));
 
-        if ($form->Fields()->hasTabSet() && ($root = $form->Fields()->findOrMakeTab('Root')) && $root->Template == 'CMSTabSet') {
+        if ($form->Fields()->hasTabSet() && ($root = $form->Fields()->findOrMakeTab('Root'))
+            && $root->Template == 'CMSTabSet') {
             $root->setTemplate('');
             $form->removeExtraClass('cms-tabset');
         }
@@ -430,23 +441,25 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
         }
 
         if (!$fields && $grid) {
-            if ($editable = $grid->getConfig()->getComponentByType('Milkyway\SS\GridFieldUtils\EditableRow')) {
+            if ($editable = $grid->getConfig()->getComponentByType(EditableRow::class)) {
                 $fields = $editable->getForm($grid, $this->getRecordFromGrid($grid, $modelClass),
                     $removeEditableColumnFields)->Fields();
-            } elseif ($editable = $grid->getConfig()->getComponentByType('GridFieldEditableColumns')) {
+            } elseif ($editable = $grid->getConfig()->getComponentByType(GridFieldEditableColumns::class)) {
                 $fields = $editable->getFields($grid, $this->getRecordFromGrid($grid, $modelClass));
             }
         }
 
         if (!$fields && $record = $this->getRecordFromGrid($grid, $modelClass)) {
-            $fields = $record->hasMethod('getEditableRowFields') ? $record->getEditableRowFields($grid) : $record->getCMSFields();
+            $fields = $record->hasMethod('getEditableRowFields') ? $record->getEditableRowFields($grid) :
+                $record->getCMSFields();
         }
 
         if (!$fields) {
             throw new \Exception(sprintf('Please setFields on your %s component', __CLASS__));
         }
 
-        if ($removeEditableColumnFields && $grid && $this->canEditWithEditableColumns($grid) && $editable = $grid->getConfig()->getComponentByType('GridFieldEditableColumns')) {
+        if ($removeEditableColumnFields && $grid && $this->canEditWithEditableColumns($grid) &&
+            $editable = $grid->getConfig()->getComponentByType(GridFieldEditableColumns::class)) {
             if (!isset($record)) {
                 $record = $this->getRecordFromGrid($grid, $modelClass);
             }
@@ -491,7 +504,8 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
                 $record->{$grid->Name . 'ID'} = $grid->Form->Record->ID;
             } else {
                 $workingParent = $this->setWorkingParentOnRecordTo;
-                if (!$workingParent && $grid->Config && $editableRow = $grid->Config->getComponentByType('Milkyway\SS\GridFieldUtils\EditableRow')) {
+                if (!$workingParent && $grid->Config && $editableRow =
+                        $grid->Config->getComponentByType(EditableRow::class)) {
                     $workingParent = $editableRow->setWorkingParentOnRecordTo;
                 }
 
@@ -512,8 +526,8 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
         $modelClass = $request->getVar($grid->ID() . '_modelClass');
         $form = $this->getForm($grid, '', true, $modelClass);
 
-        if (preg_match(sprintf('/\/%s\[%s\]\[([0-9]+)\]/', preg_quote($grid->Name), $this->getComponentName()), $remaining,
-                $matches) && isset($matches[1])
+        if (preg_match(sprintf('/\/%s\[%s\]\[([0-9]+)\]/', preg_quote($grid->Name),
+                $this->getComponentName()), $remaining, $matches) && isset($matches[1])
         ) {
             $this->renameFieldsInCompositeField($form->Fields(), $grid, $matches[1]);
         }
@@ -554,12 +568,14 @@ class AddNewInlineExtended extends RequestHandler implements GridField_HTMLProvi
 
     public function canEditWithEditableColumns($gridField)
     {
-        return $this->hideUnlessOpenedWithEditableColumns && $gridField->Config->getComponentByType('GridFieldEditableColumns');
+        return $this->hideUnlessOpenedWithEditableColumns &&
+            $gridField->Config->getComponentByType(GridFieldEditableColumns::class);
     }
 
     protected function getCacheKey(array $vars = [])
     {
-        return preg_replace('/[^a-zA-Z0-9_]/', '', $this->getComponentName() . '_' . urldecode(http_build_query($vars, '', '_')));
+        return preg_replace('/[^a-zA-Z0-9_]/', '', $this->getComponentName() . '_' .
+            urldecode(http_build_query($vars, '', '_')));
     }
 
     protected function renameFieldsInCompositeField($fields, $grid, $rowNumber = 1)

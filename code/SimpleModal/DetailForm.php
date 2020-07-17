@@ -120,7 +120,8 @@ class DetailForm extends GridFieldDetailForm
     public function handleItem($grid, $request)
     {
         if ($this->itemHandlerFactory) {
-            return call_user_func($this->itemHandlerFactory, $grid, $this, $request)->handleRequest($request, DataObjectSchema::create());
+            return call_user_func($this->itemHandlerFactory, $grid, $this, $request)
+                ->handleRequest($request, DataObjectSchema::create());
         }
 
         return parent::handleItem($grid, $request);

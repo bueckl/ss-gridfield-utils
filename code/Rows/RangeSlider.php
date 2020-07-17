@@ -54,7 +54,8 @@ class RangeSlider implements GridField_ActionProvider, GridField_DataManipulator
     public function __construct($filterField = 'Created', $fragment = 'header', $label = '', $navigationLabel = '')
     {
         if (!ClassInfo::exists('RangeSliderField')) {
-            throw new \LogicException('Please install the milkyway-multimedia/ss-mwm-formfields module to use this feature');
+            throw new \LogicException('Please install the milkyway-multimedia/ss-mwm-formfields module
+             to use this feature');
         }
 
         $this->filterField = $filterField;
@@ -110,7 +111,8 @@ class RangeSlider implements GridField_ActionProvider, GridField_DataManipulator
         $state = $gridField->State->Milkyway_SS_GridFieldUtils_RangeSlider;
 
         if (!isset($state->min) && !isset($state->value)) {
-            $settings = $this->scaffoldSliderSettingsForField(singleton($gridField->getModelClass())->obj($this->filterField), $dataList);
+            $settings = $this->scaffoldSliderSettingsForField(singleton($gridField->getModelClass())
+                ->obj($this->filterField), $dataList);
             $this->working = [$gridField, $dataList];
 
             if (isset($settings['start'])) {
@@ -131,9 +133,12 @@ class RangeSlider implements GridField_ActionProvider, GridField_DataManipulator
 
         if (isset($state->value)) {
             $comparisonFilter = $this->comparisonFilter ? '' : ':' . $this->comparisonFilter;
-            $dataListClone = $dataListClone->filter($this->filterField.$comparisonFilter, $this->getValueForDB($dbField, $state->value));
+            $dataListClone = $dataListClone->filter($this->filterField.$comparisonFilter,
+                $this->getValueForDB($dbField, $state->value));
         } elseif (isset($state->min) && isset($state->max)) {
-            $dataListClone = $dataListClone->filter([$this->filterField.':GreaterThan' => $this->getValueForDB($dbField, $state->min), $this->filterField.':LessThan' => $this->getValueForDB($dbField, $state->max)]);
+            $dataListClone = $dataListClone->filter([$this->filterField.':GreaterThan' =>
+                $this->getValueForDB($dbField, $state->min), $this->filterField.':LessThan' =>
+                $this->getValueForDB($dbField, $state->max)]);
         }
 
         return $dataListClone;
@@ -165,7 +170,8 @@ class RangeSlider implements GridField_ActionProvider, GridField_DataManipulator
             $settings['value'] = [$state->min, $state->max];
         }
 
-        $data['Slider'] = RangeSliderField::create($fieldName, null, null, $settings)->addExtraClass('ss-gridfield-range-slider--field');
+        $data['Slider'] = RangeSliderField::create($fieldName, null, null, $settings)
+            ->addExtraClass('ss-gridfield-range-slider--field');
 
         $data['Button'] = GridField_FormAction::create($gridField, 'filter', 'Filter', 'filterByRange', null)
             ->addExtraClass('ss-gridfield-range-slider--button')
@@ -193,7 +199,8 @@ class RangeSlider implements GridField_ActionProvider, GridField_DataManipulator
 
             if (isset($data['Label']) && $data['Label']) {
                 $fields->unshift(ArrayData::create([
-                    'Render' => LabelField::create($fieldName . '--LABEL', $data['Label'])->addExtraClass('ss-gridfield-range-slider--holder-label')
+                    'Render' => LabelField::create($fieldName . '--LABEL', $data['Label'])
+                        ->addExtraClass('ss-gridfield-range-slider--holder-label')
                 ]));
             }
         };
@@ -203,7 +210,8 @@ class RangeSlider implements GridField_ActionProvider, GridField_DataManipulator
         $data['HideNavigation'] = $this->hideNavigation;
 
         return [
-            $this->fragment => ArrayData::create($data)->renderWith(array_merge((array)$this->template, ['GridField_RangeSlider_Row'])),
+            $this->fragment => ArrayData::create($data)->renderWith(array_merge((array)$this->template,
+                ['GridField_RangeSlider_Row'])),
         ];
     }
 

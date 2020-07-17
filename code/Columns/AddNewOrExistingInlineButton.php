@@ -40,7 +40,9 @@ class AddNewOrExistingInlineButton extends GridFieldAddNewInlineButton implement
     /** @var string The value field that will be used when saving record to database */
     public $valField = 'ID';
 
-    /** @var string The value field that this field will transform to when saving to database if an ID is not used (also field used for existing records) */
+    /** @var string The value field that this field will transform to when saving to database
+     * if an ID is not used (also field used for existing records)
+     */
     public $valFieldAfterSave = 'Title';
 
     /** @var string|callable|\Closure A callback for the value field (otherwise scaffolded from record) */
@@ -205,7 +207,8 @@ class AddNewOrExistingInlineButton extends GridFieldAddNewInlineButton implement
             $first = $list->first();
             $field = Select2Field::create('_AddOrExistingID', $columnName, '', $list, '', $this->refField,
                 $this->valField)->setEmptyString(_t('GridFieldAddNewOrExistingInlineButton.AddOrSelectExisting',
-                'Add or select existing'))->setMinimumSearchLength(0)->requireSelection(!$this->allowNewItems)->setHasEmptyDefault($this->hasEmptyDefault);
+                'Add or select existing'))->setMinimumSearchLength(0)
+                ->requireSelection(!$this->allowNewItems)->setHasEmptyDefault($this->hasEmptyDefault);
             if ($first && !$this->hasEmptyDefault) {
                 $field->setValue($first->ID);
             }
@@ -285,7 +288,8 @@ class AddNewOrExistingInlineButton extends GridFieldAddNewInlineButton implement
             '%s[%s][{%%=o.num%%}][%s]', $grid->getName(), GridFieldAddNewInlineButton::class, $field->getName()
         ));
 
-        return str_replace('<td class="col-addOrExistingId">', '<td class="col-addOrExistingId">' . $field->Field(),
+        return str_replace('<td class="col-addOrExistingId">', '<td class="col-addOrExistingId">' .
+            $field->Field(),
             $after);
     }
 

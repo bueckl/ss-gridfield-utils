@@ -10,10 +10,11 @@ namespace Milkyway\SS\GridFieldUtils;
  * @author Mellisa Hankins <mell@milkywaymultimedia.com.au>
  */
 
-if (!class_exists('GridFieldAddExistingSearchButton')) {
+if (!class_exists(GridFieldAddExistingSearchButton::class)) {
     return;
 }
 
+use Symbiote\GridFieldExtensions\GridFieldAddExistingSearchButton;
 use Symbiote\GridFieldExtensions\GridFieldAddExistingSearchButton as AddExistingSearchButton;
 use Symbiote\GridFieldExtensions\GridFieldExtensions;
 use SilverStripe\View\ArrayData;
